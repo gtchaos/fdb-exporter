@@ -123,7 +123,8 @@ func GetStatus() (*models.FullStatus, error) {
 		if status.Cluster == nil ||
 			status.Cluster.DatabaseLockState == nil ||
 			status.Cluster.FaultTolerance == nil ||
-			status.Cluster.Data == nil {
+			status.Cluster.Data == nil ||
+			status.Cluster.DatabaseAvailable == false {
 			log.Debug().Str("status_json", string(statusJson.([]byte))).Msg("status json is missing cluster fields")
 		}
 	}
