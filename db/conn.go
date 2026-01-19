@@ -20,6 +20,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	ulog "github.com/tigrisdata/fdb-exporter/util/log"
@@ -100,6 +101,7 @@ func getFdb() fdb.Database {
 }
 
 func GetStatus() (*models.FullStatus, error) {
+	start := time.Now()
 	conn := getFdb()
 	var status models.FullStatus
 	statusKey := append([]byte{255, 255}, []byte("/status/json")...)
@@ -125,7 +127,15 @@ func GetStatus() (*models.FullStatus, error) {
 			status.Cluster.FaultTolerance == nil ||
 			status.Cluster.Data == nil ||
 			status.Cluster.DatabaseAvailable == false {
-			log.Debug().Str("status_json", string(statusJson.([]byte))).Msg("status json is missing cluster fields")
+			statusString := string(statusJson.([]byte))
+			log.Debug().Str("status_json", statusString).Msg("status json is missing cluster fields")
+
+			d := time.Since(start)
+			log.Debug().
+				Dur("took", d).
+				Str("status_json", statusString).
+				Msg("status json is missing cluster fields")
+
 		}
 	}
 
