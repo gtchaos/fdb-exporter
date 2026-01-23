@@ -54,10 +54,8 @@ func (m *MetricProvider) Close() {
 	}
 }
 
-// Periodic data collection, called from main in a goroutine
 func (mp *MetricProvider) Collect() {
-	// TODO make this configurable
-	interval := 10 * time.Second
+	interval := 4 * time.Second
 	ticker := time.NewTicker(interval)
 
 	if err := mp.reporter.collectOnce(); err != nil {
